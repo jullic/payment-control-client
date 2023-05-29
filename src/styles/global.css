@@ -63,6 +63,9 @@ select {
 input[type="date"] {
 	font-weight: bold;
 }
+input[type="checkout"] {
+	cursor: pointer;
+}
 
 * {
 	padding: 0;

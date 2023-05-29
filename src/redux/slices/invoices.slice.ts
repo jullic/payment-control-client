@@ -26,24 +26,6 @@ export const fetchInvoices = createAsyncThunk<any, undefined>(
 	}
 );
 
-export const fetchUnpaid = createAsyncThunk<any, undefined>(
-	'invoices/fetchUnpaid',
-	async (dates, thunkApi) => {
-		try {
-			const state = thunkApi.getState() as ReturnType<
-				typeof store.getState
-			>;
-			const { data } = await axios.get(
-				`http://localhost:3300/invoices/unpaid?startDate=${state.invoicesReducer.startDate}&lastDate=${state.invoicesReducer.lastDate}`
-			);
-			return data;
-		} catch (error) {
-			if (error instanceof AxiosError) {
-				thunkApi.rejectWithValue(error.response?.data || 'error');
-			}
-		}
-	}
-);
 export const fetchRange = createAsyncThunk<any, undefined>(
 	'invoices/fetchRange',
 	async (_, thunkApi) => {
@@ -77,23 +59,6 @@ export const fetchRange = createAsyncThunk<any, undefined>(
 	}
 );
 
-export const fetchPaid = createAsyncThunk<any, undefined>(
-	'invoices/fetchPaid',
-	async (dates, thunkApi) => {
-		const state = thunkApi.getState() as ReturnType<typeof store.getState>;
-		try {
-			const { data } = await axios.get(
-				`http://localhost:3300/invoices/paid?startDate=${state.invoicesReducer.startDate}&lastDate=${state.invoicesReducer.lastDate}`
-			);
-			return data;
-		} catch (error) {
-			if (error instanceof AxiosError) {
-				thunkApi.rejectWithValue(error.response?.data || 'error');
-			}
-		}
-	}
-);
-
 export const changeInvoiceStatus = createAsyncThunk<
 	any,
 	{ invoice: ICreateInvoice; id: string }
@@ -107,11 +72,7 @@ export const changeInvoiceStatus = createAsyncThunk<
 				status: args.invoice.status === 'unpaid' ? 'paid' : 'unpaid',
 			}
 		);
-		await Promise.all([
-			thunkApi.dispatch(fetchPaid()),
-			thunkApi.dispatch(fetchUnpaid()),
-			// thunkApi.dispatch(fetchRange()),
-		]);
+		await Promise.all([thunkApi.dispatch(fetchInvoices())]);
 
 		return data;
 	} catch (error) {
@@ -131,8 +92,7 @@ export const createInvoice = createAsyncThunk<any, ICreateInvoice>(
 					...invoice,
 				}
 			);
-			await thunkApi.dispatch(fetchPaid());
-			await thunkApi.dispatch(fetchUnpaid());
+			await thunkApi.dispatch(fetchInvoices());
 			await thunkApi.dispatch(fetchRange());
 			return data;
 		} catch (error) {
@@ -158,8 +118,7 @@ export const updateInvoice = createAsyncThunk<
 		if (args.invoice.status !== 'paid') {
 			await thunkApi.dispatch(fetchRange());
 		}
-		await thunkApi.dispatch(fetchPaid());
-		await thunkApi.dispatch(fetchUnpaid());
+		await thunkApi.dispatch(fetchInvoices());
 		return data;
 	} catch (error) {
 		if (error instanceof AxiosError) {
@@ -175,9 +134,7 @@ export const deleteInvoice = createAsyncThunk<any, string>(
 			const { data } = await axios.delete(
 				`http://localhost:3300/invoices/${id}`
 			);
-			await thunkApi.dispatch(fetchPaid());
-			await thunkApi.dispatch(fetchUnpaid());
-			// await thunkApi.dispatch(fetchRange());
+			await thunkApi.dispatch(fetchInvoices());
 			return data;
 		} catch (error) {
 			if (error instanceof AxiosError) {
@@ -246,47 +203,6 @@ export const invoicesSlice = createSlice({
 			)
 			.addCase(
 				fetchInvoices.rejected,
-				(state, action: PayloadAction<any>) => {
-					state.status = 'error';
-				}
-			);
-
-		builder
-			.addCase(
-				fetchUnpaid.pending,
-				(state, action: PayloadAction<any>) => {
-					state.status = 'loading';
-				}
-			)
-			.addCase(
-				fetchUnpaid.fulfilled,
-				(state, action: PayloadAction<any>) => {
-					state.status = 'idle';
-					state.unpaid = action.payload;
-					state.invoices = action.payload;
-				}
-			)
-			.addCase(
-				fetchUnpaid.rejected,
-				(state, action: PayloadAction<any>) => {
-					state.status = 'error';
-				}
-			);
-
-		builder
-			.addCase(fetchPaid.pending, (state, action: PayloadAction<any>) => {
-				state.status = 'loading';
-			})
-			.addCase(
-				fetchPaid.fulfilled,
-				(state, action: PayloadAction<any>) => {
-					state.status = 'idle';
-					state.paid = action.payload;
-					state.invoices = action.payload;
-				}
-			)
-			.addCase(
-				fetchPaid.rejected,
 				(state, action: PayloadAction<any>) => {
 					state.status = 'error';
 				}

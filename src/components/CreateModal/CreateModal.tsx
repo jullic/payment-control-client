@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC, KeyboardEvent, useEffect, useRef, useState } from 'react';
 import classNames from 'classnames';
 import { ICreateModalProps } from './CreateModal.props';
 import styles from './CreateModal.module.css';
@@ -33,6 +33,7 @@ export const CreateModal: FC<ICreateModalProps> = ({
 	const [nds, setNds] = useState<string>('');
 	const [sum, setSum] = useState<string>('');
 	const [lastDate, setLastDate] = useState('');
+	const wrapRef = useRef<HTMLDivElement>(null);
 
 	const { companies } = useAppSelector((state) => state.companiesReducer);
 
@@ -71,6 +72,24 @@ export const CreateModal: FC<ICreateModalProps> = ({
 		}
 	};
 
+	const onKeyDownHandler = (e: KeyboardEvent<HTMLInputElement>) => {
+		if (e.key === 'Enter') {
+			const parent = e.currentTarget.parentElement!;
+			const index = e.currentTarget.getAttribute('data-create-input')!;
+			console.log(e.currentTarget);
+			const next = parent.querySelector(
+				`[data-create-input="${+index + 1}"]`
+			);
+			if (!next) {
+				// @ts-ignore
+				parent.querySelector('[data-create-btn]').click();
+				return;
+			}
+			// @ts-ignore
+			next.focus();
+		}
+	};
+
 	useEffect(() => {
 		if (timeout) {
 			console.log(timeout);
@@ -84,16 +103,21 @@ export const CreateModal: FC<ICreateModalProps> = ({
 		<Portal className={classNames(styles.root, className)} {...props}>
 			<Modal>
 				<div
+					ref={wrapRef}
 					className={classNames(styles.wrap)}
 					onClick={(e) => e.stopPropagation()}
 				>
 					<Input
+						data-create-input='1'
+						onKeyDown={onKeyDownHandler}
 						autoFocus={firm === ''}
 						placeholder='Фирма'
 						value={firm}
 						onChange={(e) => setFirm(e.target.value)}
 					/>
 					<Input
+						data-create-input='2'
+						onKeyDown={onKeyDownHandler}
 						placeholder='ИНН'
 						value={inn}
 						onChange={(e) => setInn(e.target.value)}
@@ -112,24 +136,32 @@ export const CreateModal: FC<ICreateModalProps> = ({
 						))}
 					</select>
 					<Input
+						data-create-input='3'
+						onKeyDown={onKeyDownHandler}
 						autoFocus={firm !== ''}
 						placeholder='Номер накладной'
 						value={invoiceId}
 						onChange={(e) => setInvoiceId(e.target.value)}
 					/>
 					<Input
+						data-create-input='4'
+						onKeyDown={onKeyDownHandler}
 						placeholder='Сумма'
 						type='number'
 						value={sum}
 						onChange={(e) => setSum(e.target.value)}
 					/>
 					<Input
+						data-create-input='5'
+						onKeyDown={onKeyDownHandler}
 						placeholder='НДС'
 						type='number'
 						value={nds}
 						onChange={(e) => setNds(e.target.value)}
 					/>
 					<Input
+						data-create-input='6'
+						onKeyDown={onKeyDownHandler}
 						type='date'
 						value={startDate}
 						onChange={(e) => {
@@ -139,6 +171,8 @@ export const CreateModal: FC<ICreateModalProps> = ({
 						}}
 					/>
 					<Input
+						data-create-input='7'
+						onKeyDown={onKeyDownHandler}
 						placeholder='Отсрочка'
 						type='number'
 						value={timeout}
@@ -147,7 +181,9 @@ export const CreateModal: FC<ICreateModalProps> = ({
 						}}
 					/>
 					<Input disabled type='date' value={lastDate} />
-					<Button onClick={onCreateHandler}>Создать</Button>
+					<Button data-create-btn onClick={onCreateHandler}>
+						Создать
+					</Button>
 				</div>
 			</Modal>
 		</Portal>

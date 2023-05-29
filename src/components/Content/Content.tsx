@@ -7,22 +7,9 @@ import { getUniqueDates } from '../../utils/date.utils';
 import { DateComponent } from '../DateComponent/DateComponent';
 
 export const Content: FC<IContentProps> = ({ className, ...props }) => {
-	const { type, status, paid, unpaid } = useAppSelector(
+	const { type, status, invoices } = useAppSelector(
 		(state) => state.invoicesReducer
 	);
-
-	const invoices = useMemo(() => {
-		if (type === 'paid') {
-			return paid;
-		}
-		if (type === 'unpaid') {
-			return unpaid;
-		}
-		if (type === 'all') {
-			return [...paid, ...unpaid];
-		}
-		return [...paid, ...unpaid];
-	}, [paid, unpaid, type]);
 
 	const dates = useMemo(() => getUniqueDates(invoices), [invoices]);
 	return (

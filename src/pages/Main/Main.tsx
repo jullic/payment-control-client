@@ -12,9 +12,8 @@ import { modalsActions } from '../../redux/slices/modals.slice';
 import { Modals } from '../../components/Modals/Modals';
 import { fetchCompanies } from '../../redux/slices/companies.slice';
 import {
-	fetchPaid,
+	fetchInvoices,
 	fetchRange,
-	fetchUnpaid,
 	invoicesActions,
 } from '../../redux/slices/invoices.slice';
 import { Content } from '../../components/Content/Content';
@@ -23,22 +22,7 @@ import { TotalResults } from '../../components/TotalResults/TotalResults';
 export const Main: FC<IMainProps> = ({ className, ...props }) => {
 	const dispatch = useAppDispatch();
 
-	const { type, paid, unpaid } = useAppSelector(
-		(state) => state.invoicesReducer
-	);
-
-	const invoices = useMemo(() => {
-		if (type === 'paid') {
-			return paid;
-		}
-		if (type === 'unpaid') {
-			return unpaid;
-		}
-		if (type === 'all') {
-			return [...paid, ...unpaid];
-		}
-		return [];
-	}, [paid, unpaid]);
+	const { type, invoices } = useAppSelector((state) => state.invoicesReducer);
 
 	const { lastDate, startDate } = useAppSelector(
 		(state) => state.invoicesReducer
@@ -51,16 +35,7 @@ export const Main: FC<IMainProps> = ({ className, ...props }) => {
 	}, []);
 
 	useEffect(() => {
-		if (type === 'paid') {
-			dispatch(fetchPaid());
-		}
-		if (type === 'unpaid') {
-			dispatch(fetchUnpaid());
-		}
-		if (type === 'all') {
-			dispatch(fetchPaid());
-			dispatch(fetchUnpaid());
-		}
+		dispatch(fetchInvoices());
 	}, [type, dispatch, lastDate, startDate]);
 
 	return (
