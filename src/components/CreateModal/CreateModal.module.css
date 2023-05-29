@@ -8,6 +8,12 @@
 	display: flex;
 	flex-direction: column;
 	gap: 8px;
+	max-height: 90vh;
+	overflow: scroll;
+}
+
+.wrap input {
+	min-height: 35px;
 }
 
 .root select {

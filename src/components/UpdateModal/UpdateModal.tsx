@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC, KeyboardEvent, useEffect, useState } from 'react';
 import classNames from 'classnames';
 import { IUpdateModalProps } from './UpdateModal.props';
 import styles from './UpdateModal.module.css';
@@ -76,6 +76,24 @@ export const UpdateModal: FC<IUpdateModalProps> = ({
 		}
 	};
 
+	const onKeyDownHandler = (e: KeyboardEvent<HTMLInputElement>) => {
+		if (e.key === 'Enter') {
+			const parent = e.currentTarget.parentElement!;
+			const index = e.currentTarget.getAttribute('data-update-input')!;
+			console.log(e.currentTarget);
+			const next = parent.querySelector(
+				`[data-update-input="${+index + 1}"]`
+			);
+			if (!next) {
+				// @ts-ignore
+				parent.querySelector('[data-update-btn]').click();
+				return;
+			}
+			// @ts-ignore
+			next.focus();
+		}
+	};
+
 	useEffect(() => {
 		if (timeout) {
 			console.log(timeout);
@@ -93,12 +111,16 @@ export const UpdateModal: FC<IUpdateModalProps> = ({
 					onClick={(e) => e.stopPropagation()}
 				>
 					<Input
+						data-update-input='1'
+						onKeyDown={onKeyDownHandler}
 						autoFocus={firm === ''}
 						placeholder='Фирма'
 						value={firm}
 						onChange={(e) => setFirm(e.target.value)}
 					/>
 					<Input
+						data-update-input='2'
+						onKeyDown={onKeyDownHandler}
 						placeholder='ИНН'
 						value={inn}
 						onChange={(e) => setInn(e.target.value)}
@@ -117,24 +139,32 @@ export const UpdateModal: FC<IUpdateModalProps> = ({
 						))}
 					</select>
 					<Input
+						data-update-input='3'
+						onKeyDown={onKeyDownHandler}
 						autoFocus={firm !== ''}
 						placeholder='Номер накладной'
 						value={invoiceId}
 						onChange={(e) => setInvoiceId(e.target.value)}
 					/>
 					<Input
+						data-update-input='4'
+						onKeyDown={onKeyDownHandler}
 						placeholder='Сумма'
 						type='number'
 						value={sum}
 						onChange={(e) => setSum(e.target.value)}
 					/>
 					<Input
+						data-update-input='5'
+						onKeyDown={onKeyDownHandler}
 						placeholder='НДС'
 						type='number'
 						value={nds}
 						onChange={(e) => setNds(e.target.value)}
 					/>
 					<Input
+						data-update-input='6'
+						onKeyDown={onKeyDownHandler}
 						type='date'
 						value={startDate}
 						onChange={(e) => {
@@ -144,6 +174,8 @@ export const UpdateModal: FC<IUpdateModalProps> = ({
 						}}
 					/>
 					<Input
+						data-update-input='7'
+						onKeyDown={onKeyDownHandler}
 						placeholder='Отсрочка'
 						type='number'
 						value={timeout}
@@ -152,7 +184,9 @@ export const UpdateModal: FC<IUpdateModalProps> = ({
 						}}
 					/>
 					<Input disabled type='date' value={lastDate} />
-					<Button onClick={onUpdateHandler}>Создать</Button>
+					<Button data-update-btn onClick={onUpdateHandler}>
+						Обновить
+					</Button>
 				</div>
 			</Modal>
 		</Portal>

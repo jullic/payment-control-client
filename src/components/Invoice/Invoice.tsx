@@ -19,8 +19,9 @@ export const Invoice: FC<IInvoiceProps> = ({
 }) => {
 	const dispatch = useAppDispatch();
 	const [status, setStatus] = useState(invoice.status === 'paid');
-	const updatedValue = useDebounce(status, 1000);
+	const updatedValue = useDebounce(status, 800);
 	const isFirst = useRef(true);
+	const clicked = useRef(false);
 
 	const onOpenHandler = () => {
 		dispatch(invoicesActions.getInvoice(invoice));
@@ -33,7 +34,7 @@ export const Invoice: FC<IInvoiceProps> = ({
 	};
 
 	useEffect(() => {
-		if (!isFirst.current) {
+		if (!isFirst.current && clicked.current) {
 			dispatch(
 				changeInvoiceStatus({
 					id: invoice.id,
@@ -57,6 +58,7 @@ export const Invoice: FC<IInvoiceProps> = ({
 			);
 		}
 		isFirst.current = false;
+		clicked.current = false;
 	}, [updatedValue]);
 
 	return (
@@ -67,7 +69,10 @@ export const Invoice: FC<IInvoiceProps> = ({
 		>
 			<div className={classNames(styles.wrap)}>
 				<div
-					onClick={(e) => e.stopPropagation()}
+					onClick={(e) => {
+						clicked.current = true;
+					}}
+					onDoubleClick={(e) => e.stopPropagation()}
 					className={classNames(styles.item)}
 				>
 					<input
@@ -109,16 +114,18 @@ export const Invoice: FC<IInvoiceProps> = ({
 				</div>
 				<div className={classNames(styles.item)}>
 					<span>
-						Сумма: <b>{invoice.sum}</b> руб
+						Сумма: <b>{invoice.sum.toLocaleString('ru')}</b> руб
 					</span>
 				</div>
 				<div className={classNames(styles.item)}>
 					<span>
-						НДС: <b>{invoice.nds}</b> руб
+						НДС: <b>{invoice.nds.toLocaleString('ru')}</b> руб
 					</span>
 				</div>
 			</div>
-			<Button onDoubleClick={onDeleteHandler}>Удалить</Button>
+			<Button variant='danger' onDoubleClick={onDeleteHandler}>
+				Удалить
+			</Button>
 		</div>
 	);
 };

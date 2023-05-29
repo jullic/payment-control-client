@@ -20,6 +20,7 @@
 }
 
 .root.danger {
+	background: none;
 	border: 1px solid var(--danger-color);
 	color: var(--danger-color);
 }
