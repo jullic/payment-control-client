@@ -1,0 +1,36 @@
+.root {
+	font-size: 14px;
+	display: flex;
+	align-items: center;
+	padding: 12px 32px;
+	cursor: pointer;
+}
+
+.root:hover {
+	background: var(--gray-light-color);
+	border-radius: 5px;
+}
+.wrap {
+	width: 100%;
+	display: grid;
+	align-items: center;
+	grid-template-columns: 3fr repeat(5, 2fr);
+}
+.item {
+	display: flex;
+	gap: 16px;
+}
+.item label {
+	cursor: pointer;
+}
+
+.thin {
+	font-weight: bold;
+	color: var(--gray-color);
+}
+
+.text {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+}

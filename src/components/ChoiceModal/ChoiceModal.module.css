@@ -1,0 +1,43 @@
+.root {
+}
+.wrap {
+	padding: 24px;
+	border-radius: 5px;
+	width: 50vw;
+	height: 80vh;
+	background: var(--white-color);
+	overflow: scroll;
+}
+
+.head {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	margin-bottom: 12px;
+}
+
+.suppliers {
+	display: flex;
+	flex-direction: column;
+}
+.supplier {
+	font-size: 14px;
+	padding: 12px;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+}
+.supplier:hover {
+	cursor: pointer;
+	border-radius: 5px;
+	background: var(--gray-thin-color);
+}
+.supplier .head {
+}
+.info {
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+}
+.timeout {
+}
