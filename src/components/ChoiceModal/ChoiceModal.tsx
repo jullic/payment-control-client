@@ -27,6 +27,7 @@ export const ChoiceModal: FC<IChoiceModalProps> = ({ className, ...props }) => {
 
 	useEffect(() => {
 		dispatch(fetchSuppliers());
+		dispatch(searchActions.changeSearch(''));
 	}, []);
 
 	return (
